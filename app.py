@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 import joblib
 
-# تحميل الموديل و scaler
+# INSTALLER LE MODELE scaler
 model = joblib.load("riskinvest_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
