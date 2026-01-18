@@ -2,6 +2,28 @@ import streamlit as st
 import numpy as np
 import joblib
 
+
+st.set_page_config(
+    page_title="AI-RiskInvest",
+    layout="wide"
+)
+
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+html, body, [class*="css"], h1, h2, h3, h4, h5, h6, p, span, label {
+    font-family: 'Inter', sans-serif !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+
+
+
+#______________________
+
 # INSTALLER LE MODELE scaler
 model = joblib.load("riskinvest_model.pkl")
 scaler = joblib.load("scaler.pkl")
@@ -171,15 +193,6 @@ input {
 
 
 
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-}
-</style>
-""", unsafe_allow_html=True)
 
 
 
