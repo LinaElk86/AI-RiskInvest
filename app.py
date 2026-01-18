@@ -77,53 +77,6 @@ if st.button("Prédire"):
 
 
 
-
-#___________________________________________________________
-
-
-
-import matplotlib.pyplot as plt
-
-# ===================== GRAPH =====================
-st.subheader("📈 Évolution des prix")
-
-# Axe X : 60 périodes + prediction
-x_prices = list(range(1, 61))
-x_pred = 61
-
-# Création du graphique
-fig, ax = plt.subplots(figsize=(10, 4))
-
-# Prix historiques
-ax.plot(x_prices, prices, label="Prix historiques", color="blue")
-
-# Point de prédiction
-ax.scatter(
-    x_pred,
-    predicted_price,
-    color="red",
-    label="Prix prédit",
-    zorder=5
-)
-
-# Ligne pointillée vers la prédiction
-ax.plot(
-    [60, x_pred],
-    [prices[-1], predicted_price],
-    linestyle="--",
-    color="red",
-    alpha=0.7
-)
-
-ax.set_xlabel("Temps")
-ax.set_ylabel("Prix")
-ax.set_title("Prédiction du prochain prix")
-ax.legend()
-ax.grid(True)
-
-st.pyplot(fig)
-#______________________________________________________________________________2__________________________________________________________________
-
 # ===================== CHATBOT =====================
 
 
