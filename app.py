@@ -66,23 +66,34 @@ st.markdown("## 📊 Résultat de la prédiction")
 if st.button("🔴 Prédire"):
     X = scaler.transform(np.array(prices).reshape(-1, 1)).reshape(1, -1)
     prediction = model.predict(X)
-    st.session_state.predicted_price = scaler.inverse_transform(prediction.reshape(-1,1))[0][0]
+    st.session_state.predicted_price = scaler.inverse_transform(
+        prediction.reshape(-1, 1)
+    )[0][0]
     st.success("✅ Prédiction effectuée avec succès")
 
-# ===================== DISPLAY RESULT (PERSISTENT) =====================
+# ===================== DISPLAY RESULT (GRAPH SMALL) =====================
 if st.session_state.predicted_price is not None:
     st.metric("📈 Prix prédit", f"{st.session_state.predicted_price:.4f}")
 
-    fig, ax = plt.subplots(figsize=(6, 3))
-    ax.plot(range(1,61), prices, label="Prix historiques", linewidth=2)
-    ax.scatter(61, st.session_state.predicted_price, color="red", label="Prix prédit")
-    ax.plot([60,61],[prices[-1], st.session_state.predicted_price], "--", color="red")
+    # 👇 GRAPH PETIT ET FIXE
+    fig, ax = plt.subplots(figsize=(4, 2))
+    ax.plot(range(1, 61), prices, label="Prix historiques", linewidth=2)
+    ax.scatter(61, st.session_state.predicted_price, color="red", label="Prix prédit", zorder=5)
+    ax.plot(
+        [60, 61],
+        [prices[-1], st.session_state.predicted_price],
+        linestyle="--",
+        color="red"
+    )
+
     ax.set_xlabel("Temps")
     ax.set_ylabel("Prix")
     ax.set_title("Prédiction du prochain prix")
-    ax.legend()
+    ax.legend(fontsize=8)
     ax.grid(True)
-    st.pyplot(fig)
+
+    # ❌ لا توسّع
+    st.pyplot(fig, use_container_width=False)
 
 # ===================== CHATBOT LOGIC =====================
 def chatbot_reply(question):
@@ -115,7 +126,7 @@ def chatbot_reply(question):
 
     return (
         "🤖 Question non reconnue.\n\n"
-        "Essayez par exemple :\n"
+        "Essayez :\n"
         "• Explique le résultat\n"
         "• Quel est le risque ?"
     )
@@ -125,11 +136,11 @@ st.divider()
 st.subheader("💬 Chatbot AI-RiskInvest")
 st.markdown("### 💡 Questions suggérées")
 
-c1, c2, c3 = st.columns(3)
-
 def ask(q):
     st.session_state.messages.append({"role": "user", "content": q})
     st.session_state.messages.append({"role": "assistant", "content": chatbot_reply(q)})
+
+c1, c2, c3 = st.columns(3)
 
 if c1.button("👋 Hello / Who are you"):
     ask("Hello")
