@@ -49,30 +49,85 @@ if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # Simple chatbot logic
-    if "quoi" in user_input.lower() or "what" in user_input.lower():
-        reply = (
-            "Je suis le chatbot de AI-RiskInvest. "
-            "Je vous aide à comprendre l'application et les prédictions."
-        )
-    elif "comment" in user_input.lower():
-        reply = (
-            "Entrez les 60 derniers prix de clôture "
-            "puis cliquez sur le bouton « Prédire »."
-        )
-    else:
-        reply = (
-            "Bonne question 👍 "
-            "Pour le moment, je réponds uniquement à des questions simples."
-        )
+   # Simple chatbot logic
+question = user_input.lower()
 
-    # Save assistant response
-    st.session_state.messages.append({"role": "assistant", "content": reply})
+# Greetings
+if any(word in question for word in ["hello", "hi", "bonjour", "salut", "salam", "slm"]):
+    reply = (
+        "Bonjour 👋 Je suis le chatbot AI-RiskInvest 🤖.\n"
+        "Je peux vous aider à comprendre l’application, le modèle et la prédiction."
+    )
 
-    with st.chat_message("assistant"):
-        st.markdown(reply)
+# What is the app
+elif any(word in question for word in ["quoi", "what", "application", "ai-riskinvest"]):
+    reply = (
+        "AI-RiskInvest est une application de prédiction boursière "
+        "basée sur le Machine Learning, orientée gestion du risque."
+    )
 
+# How to use
+elif any(word in question for word in ["comment", "utiliser", "use"]):
+    reply = (
+        "Entrez les 60 derniers prix de clôture d’un actif "
+        "puis cliquez sur le bouton « Prédire »."
+    )
 
+# Prediction meaning
+elif any(word in question for word in ["prediction", "prédit", "résultat"]):
+    reply = (
+        "La prédiction représente une estimation du prochain prix "
+        "basée sur les données historiques."
+    )
+
+# Risk
+elif any(word in question for word in ["risque", "risk"]):
+    reply = (
+        "Le risque correspond à l’incertitude des marchés financiers. "
+        "AI-RiskInvest aide à mieux l’anticiper."
+    )
+
+# Model
+elif any(word in question for word in ["modèle", "modele", "model", "machine learning"]):
+    reply = (
+        "Le modèle utilise le Machine Learning pour analyser "
+        "les prix passés et détecter des tendances."
+    )
+
+# Data
+elif any(word in question for word in ["données", "data", "prix"]):
+    reply = (
+        "Les données utilisées sont les prix de clôture saisis par l’utilisateur."
+    )
+
+# Accuracy / reliability
+elif any(word in question for word in ["fiable", "accuracy", "précision"]):
+    reply = (
+        "Les prédictions sont indicatives. "
+        "Elles ne remplacent pas un conseil financier professionnel."
+    )
+
+# Help
+elif any(word in question for word in ["help", "aide"]):
+    reply = (
+        "Vous pouvez me poser des questions sur :\n"
+        "- l’application\n"
+        "- la prédiction\n"
+        "- le risque\n"
+        "- le modèle\n"
+        "- l’utilisation"
+    )
+
+# Thanks
+elif any(word in question for word in ["merci", "thanks"]):
+    reply = "Avec plaisir 😊 N’hésitez pas si vous avez d’autres questions."
+
+# Default
+else:
+    reply = (
+        "Je n’ai pas encore compris votre question 🤖.\n"
+        "Essayez par exemple : hello, comment utiliser, risque, modèle, prédiction."
+    )
 
 
 
