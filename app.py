@@ -12,7 +12,7 @@ try:
 except:
     pass
 
-st.title("📈 AI-RiskInvest")
+st.title(" AI-RiskInvest")
 st.write("Application de prédiction boursière et gestion du risque")
 
 # ===================== LOAD MODEL =====================
@@ -68,7 +68,7 @@ for _ in range(6):
         idx += 1
 
 # ===================== PREDICTION =====================
-st.markdown("## 📊 Résultat de la prédiction")
+st.markdown("##   Résultat de la prédiction")
 
 if st.button("🔮 Prédire"):
     prices_array = np.array(prices).reshape(-1, 1)
