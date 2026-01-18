@@ -97,77 +97,189 @@ if st.button("Prédire"):
         st.pyplot(fig)
 
 # ===================== CHATBOT =====================
-
-
 st.divider()
 st.subheader("💬 Chatbot AI-RiskInvest")
 
-# Initialize chat history
+# ---------- Initialisation ----------
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display chat history
+# ---------- Questions suggérées (Buttons) ----------
+st.markdown("### 💡 Questions suggérées")
+
+b1, b2, b3 = st.columns(3)
+if b1.button("👋 Hello / Who are you"):
+    st.session_state.messages.append({"role": "user", "content": "Hello, who are you?"})
+if b2.button("📊 Résultat / Prediction"):
+    st.session_state.messages.append({"role": "user", "content": "Explique le résultat de la prédiction"})
+if b3.button("⚠️ Risk Management"):
+    st.session_state.messages.append({"role": "user", "content": "Quel est le risque de cette prédiction ?"})
+
+b4, b5, b6 = st.columns(3)
+if b4.button("📉 RSI / MACD"):
+    st.session_state.messages.append({"role": "user", "content": "Utilisez-vous RSI ou MACD ?"})
+if b5.button("📰 News du marché"):
+    st.session_state.messages.append({"role": "user", "content": "Les news du marché sont-elles prises en compte ?"})
+if b6.button("ℹ️ Utilisation de l’app"):
+    st.session_state.messages.append({"role": "user", "content": "Comment utiliser l'application ?"})
+
+b7, b8, b9 = st.columns(3)
+if b7.button("🧠 Limites du modèle"):
+    st.session_state.messages.append({"role": "user", "content": "Quelles sont les limites du modèle ?"})
+if b8.button("📚 Données utilisées"):
+    st.session_state.messages.append({"role": "user", "content": "Quelles données sont utilisées ?"})
+if b9.button("🎓 Questions académiques"):
+    st.session_state.messages.append({"role": "user", "content": "Quels sont les objectifs du projet ?"})
+
+# ---------- Affichage historique ----------
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# User input
-user_input = st.chat_input("Posez votre question ici...")
+# ---------- Input utilisateur ----------
+user_input = st.chat_input("Posez votre question (FR / EN / AR)")
 
 if user_input:
-    # Save user message
-    st.session_state.messages.append(
-        {"role": "user", "content": user_input}
-    )
-
+    st.session_state.messages.append({"role": "user", "content": user_input})
     question = user_input.lower()
 
-    # Chatbot logic
-    if any(word in question for word in ["hello", "hi", "salut", "bonjour", "salam"]):
+    # ---------- LOGIQUE DU CHATBOT ----------
+
+    # HELLO / WHO ARE YOU
+    if any(w in question for w in [
+        "hello","hi","bonjour","salut","salam",
+        "who are you","qui es-tu","من انت","شكون"
+    ]):
         reply = (
-            "Bonjour 👋 Je suis le chatbot AI-RiskInvest 🤖.\n"
-            "Je peux vous aider à comprendre l’application et les prédictions."
+            "👋 Bonjour / Hello!\n\n"
+            "Je suis **AI-RiskInvest** 🤖.\n"
+            "J’aide à comprendre les **prédictions**, les **risques**, "
+            "les **limites du modèle** et **l’utilisation de l’application**.\n\n"
+            "أستطيع المساعدة بالعربية، الفرنسية والإنجليزية."
         )
 
-    elif any(word in question for word in ["quoi", "what", "application"]):
+    # RESULT / PREDICTION
+    elif any(w in question for w in [
+        "résultat","prediction","prédit","prix",
+        "result","predict",
+        "نتيجة","توقع","السعر"
+    ]):
+        if "predicted_price" in locals():
+            reply = (
+                f"📊 **Résultat de la prédiction**\n\n"
+                f"Le prix prédit est **{predicted_price:.4f}**.\n\n"
+                "Basé sur les **60 derniers prix historiques**.\n"
+                "Il s’agit d’une **estimation** (pas une garantie).\n\n"
+                "⚠️ Utilisez toujours une analyse complémentaire."
+            )
+        else:
+            reply = (
+                "ℹ️ Aucun résultat disponible.\n"
+                "Veuillez d’abord entrer 60 prix et cliquer sur **Prédire**."
+            )
+
+    # GOOD / BAD / RELIABILITY
+    elif any(w in question for w in [
+        "bonne","opportunité","fiable","reliable",
+        "good","trust",
+        "مزيانة","جيدة","موثوق"
+    ]):
         reply = (
-            "AI-RiskInvest est une application de prédiction boursière "
-            "basée sur le Machine Learning et la gestion du risque."
+            "🧠 **Qualité du résultat**\n\n"
+            "La prédiction peut être **utile à court terme** si la tendance est claire.\n"
+            "Cependant, elle **n’est pas fiable à 100%**.\n\n"
+            "👉 À combiner avec gestion du risque et indicateurs."
         )
 
-    elif any(word in question for word in ["comment", "utiliser"]):
+    # RISK MANAGEMENT
+    elif any(w in question for w in [
+        "risque","risk","conseil",
+        "خطر","مخاطر","نصح"
+    ]):
         reply = (
-            "Entrez les 60 derniers prix de clôture "
-            "puis cliquez sur le bouton « Prédire »."
+            "⚠️ **Risk Management**\n\n"
+            "• Le marché est imprévisible\n"
+            "• Ce n’est **PAS** un conseil financier\n"
+            "• Le modèle peut se tromper\n\n"
+            "👉 Utilisez toujours : Stop-loss, taille de position, diversification."
         )
 
-    elif any(word in question for word in ["prediction", "prédit", "résultat"]):
+    # RSI / MACD / INDICATORS
+    elif any(w in question for w in [
+        "rsi","macd","indicateur","indicator",
+        "مؤشر","مؤشرات"
+    ]):
         reply = (
-            "La prédiction est une estimation du prochain prix "
-            "basée sur les données historiques."
+            "📉 **Indicateurs techniques**\n\n"
+            "❌ RSI : non utilisé\n"
+            "❌ MACD : non utilisé\n\n"
+            "Le modèle utilise **uniquement les prix historiques**.\n"
+            "Ajouter RSI/MACD améliorerait la précision."
         )
 
-    elif any(word in question for word in ["risque", "risk"]):
+    # DATA USED
+    elif any(w in question for w in [
+        "données","data","60","normalisé","normalized",
+        "بيانات","معطيات"
+    ]):
         reply = (
-            "Le risque représente l’incertitude du marché. "
-            "Cette application aide à mieux l’anticiper."
+            "📚 **Données utilisées**\n\n"
+            "• 60 derniers prix de clôture\n"
+            "• Données **normalisées** avant prédiction\n"
+            "• Ordre chronologique respecté\n\n"
+            "Pourquoi 60 ? Pour capturer la tendance récente."
         )
 
-    elif any(word in question for word in ["merci", "thanks"]):
-        reply = "Avec plaisir 😊 N’hésitez pas à poser d’autres questions."
+    # NEWS / MARKET
+    elif any(w in question for w in [
+        "news","actualité","marché",
+        "أخبار","السوق"
+    ]):
+        reply = (
+            "📰 **News du marché**\n\n"
+            "Les actualités **ne sont pas intégrées** actuellement.\n"
+            "Or, elles peuvent fortement influencer les prix.\n\n"
+            "➡️ Une amélioration future peut intégrer l’analyse des news."
+        )
 
+    # HOW TO USE
+    elif any(w in question for w in [
+        "comment","utiliser","how","use",
+        "كيف","استعمال"
+    ]):
+        reply = (
+            "ℹ️ **Utilisation de l’application**\n\n"
+            "1️⃣ Entrer 60 prix de clôture\n"
+            "2️⃣ Vérifier l’affichage\n"
+            "3️⃣ Cliquer sur **Prédire**\n"
+            "4️⃣ Analyser le prix et le graphique"
+        )
+
+    # ACADEMIC QUESTIONS
+    elif any(w in question for w in [
+        "objectif","goals","choisi","improve","améliorer",
+        "أهداف","تطوير","اخترتم"
+    ]):
+        reply = (
+            "🎓 **Questions académiques**\n\n"
+            "• Objectif : aider à la décision via le ML\n"
+            "• Choix du modèle : simplicité et interprétabilité\n"
+            "• Améliorations : RSI, MACD, news, deep learning"
+        )
+
+    # DEFAULT
     else:
         reply = (
-            "Je n’ai pas bien compris 🤖.\n"
-            "Essayez par exemple : hello, comment utiliser, prédiction, risque."
+            "🤖 Je n’ai pas bien compris.\n\n"
+            "Exemples :\n"
+            "• Hello\n"
+            "• Explique le résultat\n"
+            "• Quel est le risque ?\n"
+            "• RSI / MACD\n"
+            "• News du marché"
         )
 
-    # Save assistant response
-    st.session_state.messages.append(
-        {"role": "assistant", "content": reply}
-    )
-
-    # Display assistant message
+    st.session_state.messages.append({"role": "assistant", "content": reply})
     with st.chat_message("assistant"):
         st.markdown(reply)
 
