@@ -1,1 +1,7 @@
+streamlit
+numpy
+scikit-learn
+joblib
+pandas
 
+add dependencies
