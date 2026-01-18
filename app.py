@@ -12,14 +12,14 @@ try:
 except:
     pass
 
-st.title(" AI-RiskInvest")
+st.title("🤖 AI-RiskInvest")
 st.write("Application de prédiction boursière et gestion du risque")
 
 # ===================== LOAD MODEL =====================
 model = joblib.load("riskinvest_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
-# ===================== SESSION STATE INIT =====================
+# ===================== SESSION STATE =====================
 if "predicted_price" not in st.session_state:
     st.session_state.predicted_price = None
 
@@ -54,7 +54,7 @@ if texte_prix:
         st.error("❌ Veuillez entrer uniquement des nombres.")
 
 # ===================== DISPLAY PRICES =====================
-st.markdown("###  Détail des 60 prix")
+st.markdown("### 📋 Détail des 60 prix")
 
 idx = 0
 for _ in range(6):
@@ -68,27 +68,23 @@ for _ in range(6):
         idx += 1
 
 # ===================== PREDICTION =====================
-st.markdown("##   Résultat de la prédiction")
+st.markdown("## 📊 Résultat de la prédiction")
 
-if st.button(" 🔴 Prédire"):
+if st.button("🔴 Prédire"):
     prices_array = np.array(prices).reshape(-1, 1)
     prices_scaled = scaler.transform(prices_array)
     X_input = prices_scaled.reshape(1, -1)
 
     prediction = model.predict(X_input)
-
     st.session_state.predicted_price = scaler.inverse_transform(
         prediction.reshape(-1, 1)
     )[0][0]
 
     st.success("✅ Prédiction effectuée avec succès")
 
-# ===================== RESULT DISPLAY (PERSISTENT) =====================
+# ===================== RESULT DISPLAY =====================
 if st.session_state.predicted_price is not None:
-    st.metric(
-        "📈 Prix prédit",
-        f"{st.session_state.predicted_price:.4f}"
-    )
+    st.metric("📈 Prix prédit", f"{st.session_state.predicted_price:.4f}")
 
     st.subheader("📉 Évolution des prix")
 
@@ -116,25 +112,63 @@ if st.session_state.predicted_price is not None:
 
     st.pyplot(fig, use_container_width=False)
 
-# ===================== CHATBOT =====================
+# ===================== CHATBOT LOGIC =====================
+def get_reply(question):
+    q = question.lower()
+
+    if "hello" in q or "bonjour" in q or "who" in q:
+        return (
+            "👋 Je suis **AI-RiskInvest**.\n\n"
+            "Je vous aide à comprendre les prédictions, "
+            "les risques et l’utilisation de l’application."
+        )
+
+    elif "résultat" in q or "prediction" in q:
+        if st.session_state.predicted_price is not None:
+            return (
+                f"📊 Le prix prédit est **{st.session_state.predicted_price:.4f}**.\n\n"
+                "Basé sur les 60 derniers prix.\n"
+                "⚠️ Ce n’est pas une garantie."
+            )
+        else:
+            return "ℹ️ Veuillez d’abord cliquer sur **Prédire**."
+
+    elif "risque" in q:
+        return (
+            "⚠️ Le marché est imprévisible.\n"
+            "Cette prédiction n’est PAS un conseil financier.\n"
+            "Utilisez toujours une gestion du risque."
+        )
+
+    else:
+        return (
+            "🤖 Je n’ai pas bien compris.\n\n"
+            "Essayez :\n"
+            "• Explique le résultat\n"
+            "• Quel est le risque ?"
+        )
+
+# ===================== CHATBOT UI =====================
 st.divider()
 st.subheader("💬 Chatbot AI-RiskInvest")
-
 st.markdown("### 💡 Questions suggérées")
 
 c1, c2, c3 = st.columns(3)
+
 if c1.button("👋 Hello / Who are you"):
-    st.session_state.messages.append(
-        {"role": "user", "content": "Hello, who are you?"}
-    )
+    q = "Hello, who are you?"
+    st.session_state.messages.append({"role": "user", "content": q})
+    st.session_state.messages.append({"role": "assistant", "content": get_reply(q)})
+
 if c2.button("📊 Explique le résultat"):
-    st.session_state.messages.append(
-        {"role": "user", "content": "Explique le résultat"}
-    )
+    q = "Explique le résultat"
+    st.session_state.messages.append({"role": "user", "content": q})
+    st.session_state.messages.append({"role": "assistant", "content": get_reply(q)})
+
 if c3.button("⚠️ Quel est le risque ?"):
-    st.session_state.messages.append(
-        {"role": "user", "content": "Quel est le risque ?"}
-    )
+    q = "Quel est le risque ?"
+    st.session_state.messages.append({"role": "user", "content": q})
+    st.session_state.messages.append({"role": "assistant", "content": get_reply(q)})
 
 # ===================== CHAT HISTORY =====================
 for msg in st.session_state.messages:
@@ -145,47 +179,9 @@ for msg in st.session_state.messages:
 user_input = st.chat_input("Posez votre question (FR / EN / AR)")
 
 if user_input:
-    st.session_state.messages.append(
-        {"role": "user", "content": user_input}
-    )
-
-    q = user_input.lower()
-
-    if "hello" in q or "bonjour" in q or "who" in q:
-        reply = (
-            "👋 Je suis **AI-RiskInvest**.\n\n"
-            "Je vous aide à comprendre les prédictions, "
-            "les risques et l’utilisation de l’application."
-        )
-
-    elif "résultat" in q or "prediction" in q:
-        if st.session_state.predicted_price:
-            reply = (
-                f"📊 Le prix prédit est **{st.session_state.predicted_price:.4f}**.\n\n"
-                "Basé sur les 60 derniers prix.\n"
-                "⚠️ Ce n’est pas une garantie."
-            )
-        else:
-            reply = "ℹ️ Veuillez d’abord cliquer sur **Prédire**."
-
-    elif "risque" in q:
-        reply = (
-            "⚠️ Le marché est imprévisible.\n"
-            "Cette prédiction n’est PAS un conseil financier.\n"
-            "Utilisez toujours une gestion du risque."
-        )
-
-    else:
-        reply = (
-            "🤖 Je n’ai pas bien compris.\n\n"
-            "Essayez :\n"
-            "• Explique le résultat\n"
-            "• Quel est le risque ?"
-        )
-
-    st.session_state.messages.append(
-        {"role": "assistant", "content": reply}
-    )
+    st.session_state.messages.append({"role": "user", "content": user_input})
+    reply = get_reply(user_input)
+    st.session_state.messages.append({"role": "assistant", "content": reply})
 
     with st.chat_message("assistant"):
         st.markdown(reply)
