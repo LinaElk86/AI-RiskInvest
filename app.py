@@ -54,18 +54,26 @@ for ligne in range(6):  # 6 lignes
         index += 1
 
 # ===================== PREDICTION =====================
-if st.button("Prédire") and len(prices) == 60:
-    prices_array = np.array(prices).reshape(-1, 1)
-    prices_scaled = scaler.transform(prices_array)
-    X_input = prices_scaled.reshape(1, -1)
+st.markdown("## Résultat de la prédiction")
 
-    prediction = model.predict(X_input)
-    predicted_price = scaler.inverse_transform(
-        prediction.reshape(-1, 1)
-    )[0][0]
+if st.button("Prédire"):
+    if len(prices) != 60:
+        st.error("❌ Il faut exactement 60 prix pour prédire.")
+    else:
+        prices_array = np.array(prices).reshape(-1, 1)
+        prices_scaled = scaler.transform(prices_array)
+        X_input = prices_scaled.reshape(1, -1)
 
+        prediction = model.predict(X_input)
+        predicted_price = scaler.inverse_transform(
+            prediction.reshape(-1, 1)
+        )[0][0]
 
-
+        st.success("✅ Prédiction effectuée avec succès")
+        st.metric(
+            label="📊 Prix prédit",
+            value=f"{predicted_price:.4f}"
+        )
 #______________________________________________________________________________2__________________________________________________________________
 
 # ===================== CHATBOT =====================
