@@ -107,43 +107,77 @@ if user_input:
 
 
 #_________________________________________________________________________________________3______________________________________________________________________________________
-
 st.markdown("""
 <style>
+/* ===== Global ===== */
 .stApp {
-    background-color: #0d1b2a;
-    color: white;
+    background-color: #0f172a; /* bleu foncé classique */
+    color: #f1f5f9;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-h1, h2, h3 {
-    color: #e63946;
+/* ===== Titles ===== */
+h1 {
+    color: #e11d48; /* rouge foncé */
+    font-weight: 700;
+}
+h2, h3 {
+    color: #f8fafc;
 }
 
+/* ===== Text ===== */
+p, label {
+    font-size: 16px;
+    color: #e5e7eb;
+}
+
+/* ===== Inputs ===== */
+input, textarea {
+    background-color: #020617 !important;
+    color: #f8fafc !important;
+    border: 1px solid #334155 !important;
+    border-radius: 6px !important;
+    font-size: 15px !important;
+}
+
+/* Placeholder */
+textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* ===== Buttons ===== */
 .stButton>button {
-    background-color: #1d3557;
+    background-color: #1e293b;
     color: white;
-    border-radius: 8px;
-    border: 1px solid #e63946;
+    border: 1px solid #e11d48;
+    border-radius: 6px;
+    padding: 0.5em 1.2em;
+    font-weight: 500;
 }
 .stButton>button:hover {
-    background-color: #e63946;
+    background-color: #e11d48;
+    color: white;
 }
 
-input {
-    background-color: #1b263b !important;
-    color: white !important;
-}
-
+/* ===== Chat messages ===== */
 [data-testid="chat-message-user"] {
-    background-color: #1d3557;
-    border-radius: 10px;
+    background-color: #020617;
+    border-radius: 8px;
+    padding: 10px;
 }
 
 [data-testid="chat-message-assistant"] {
-    background-color: #e63946;
-    border-radius: 10px;
+    background-color: #1e293b;
+    border-left: 4px solid #e11d48;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* ===== Chat input ===== */
+[data-testid="stChatInput"] textarea {
+    background-color: #020617 !important;
+    color: #f8fafc !important;
+    font-size: 15px !important;
 }
 </style>
 """, unsafe_allow_html=True)
-
-
