@@ -51,7 +51,7 @@ if texte_prix:
         st.error("❌ Veuillez entrer uniquement des nombres.")
 
 # ===================== DISPLAY PRICES =====================
-st.markdown("### 📋 Détail des 60 prix")
+st.markdown("###  Détail des 60 prix")
 
 idx = 0
 for _ in range(6):
@@ -61,7 +61,7 @@ for _ in range(6):
         idx += 1
 
 # ===================== PREDICTION =====================
-st.markdown("## 📊 Résultat de la prédiction")
+st.markdown("##  Résultat de la prédiction")
 
 if st.button("🔴 Prédire"):
     X = scaler.transform(np.array(prices).reshape(-1, 1)).reshape(1, -1)
@@ -92,7 +92,7 @@ if st.session_state.predicted_price is not None:
     ax.legend(fontsize=8)
     ax.grid(True)
 
-    # ❌ لا توسّع
+    # ❌ nest pas grand
     st.pyplot(fig, use_container_width=False)
 
 # ===================== CHATBOT LOGIC =====================
