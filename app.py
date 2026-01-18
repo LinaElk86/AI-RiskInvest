@@ -28,9 +28,14 @@ if st.button("Prédire"):
 
 
 
+#______________________________________________________________________________2__________________________________________________________________
+
+
+
 st.divider()
 st.subheader("💬 Chatbot AI-RiskInvest")
 
+# Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -44,12 +49,11 @@ user_input = st.chat_input("Posez votre question ici...")
 
 if user_input:
     # Save user message
-    st.session_state.messages.append({"role": "user", "content": user_input})
+    st.session_state.messages.append(
+        {"role": "user", "content": user_input}
+    )
 
-    with st.chat_message("user"):
-        st.markdown(user_input)
-
- # Simple chatbot logic
+    question = user_input.lower()
 
     # Chatbot logic
     if any(word in question for word in ["hello", "hi", "salut", "bonjour", "salam"]):
