@@ -92,7 +92,6 @@ if st.button("🔮 Prédire"):
     ax.grid(True)
 
     st.pyplot(fig)
-
 # ===================== CHATBOT =====================
 st.divider()
 st.subheader("💬 Chatbot AI-RiskInvest")
