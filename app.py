@@ -39,9 +39,7 @@ prices = [0.0] * 60
 
 if texte_prix:
     try:
-        texte_prix = texte_prix.replace("\n", ",")
-        valeurs = [float(v.strip()) for v in texte_prix.split(",") if v.strip()]
-
+        valeurs = [float(v.strip()) for v in texte_prix.replace("\n", ",").split(",") if v.strip()]
         for i in range(min(len(valeurs), 60)):
             prices[i] = valeurs[i]
 
@@ -49,7 +47,6 @@ if texte_prix:
             st.success("✅ 60 prix chargés avec succès")
         else:
             st.warning(f"⚠️ {len(valeurs)} prix saisis — 60 requis")
-
     except ValueError:
         st.error("❌ Veuillez entrer uniquement des nombres.")
 
@@ -60,93 +57,68 @@ idx = 0
 for _ in range(6):
     cols = st.columns(10)
     for col in cols:
-        col.number_input(
-            f"{idx + 1}",
-            value=prices[idx],
-            disabled=True
-        )
+        col.number_input(f"{idx+1}", value=prices[idx], disabled=True)
         idx += 1
 
 # ===================== PREDICTION =====================
 st.markdown("## 📊 Résultat de la prédiction")
 
 if st.button("🔴 Prédire"):
-    prices_array = np.array(prices).reshape(-1, 1)
-    prices_scaled = scaler.transform(prices_array)
-    X_input = prices_scaled.reshape(1, -1)
-
-    prediction = model.predict(X_input)
-    st.session_state.predicted_price = scaler.inverse_transform(
-        prediction.reshape(-1, 1)
-    )[0][0]
-
+    X = scaler.transform(np.array(prices).reshape(-1, 1)).reshape(1, -1)
+    prediction = model.predict(X)
+    st.session_state.predicted_price = scaler.inverse_transform(prediction.reshape(-1,1))[0][0]
     st.success("✅ Prédiction effectuée avec succès")
 
-# ===================== RESULT DISPLAY =====================
+# ===================== DISPLAY RESULT (PERSISTENT) =====================
 if st.session_state.predicted_price is not None:
     st.metric("📈 Prix prédit", f"{st.session_state.predicted_price:.4f}")
 
-    st.subheader("📉 Évolution des prix")
-
-    fig, ax = plt.subplots(figsize=(5, 2.5))
-    ax.plot(range(1, 61), prices, label="Prix historiques", linewidth=2)
-    ax.scatter(
-        61,
-        st.session_state.predicted_price,
-        color="red",
-        label="Prix prédit",
-        zorder=5
-    )
-    ax.plot(
-        [60, 61],
-        [prices[-1], st.session_state.predicted_price],
-        linestyle="--",
-        color="red"
-    )
-
+    fig, ax = plt.subplots(figsize=(6, 3))
+    ax.plot(range(1,61), prices, label="Prix historiques", linewidth=2)
+    ax.scatter(61, st.session_state.predicted_price, color="red", label="Prix prédit")
+    ax.plot([60,61],[prices[-1], st.session_state.predicted_price], "--", color="red")
     ax.set_xlabel("Temps")
     ax.set_ylabel("Prix")
     ax.set_title("Prédiction du prochain prix")
     ax.legend()
     ax.grid(True)
-
-    st.pyplot(fig, use_container_width=False)
+    st.pyplot(fig)
 
 # ===================== CHATBOT LOGIC =====================
-def get_reply(question):
+def chatbot_reply(question):
     q = question.lower()
 
-    if "hello" in q or "bonjour" in q or "who" in q:
+    if any(w in q for w in ["hello", "bonjour", "who", "salut"]):
         return (
             "👋 Je suis **AI-RiskInvest**.\n\n"
             "Je vous aide à comprendre les prédictions, "
             "les risques et l’utilisation de l’application."
         )
 
-    elif "résultat" in q or "prediction" in q:
-        if st.session_state.predicted_price is not None:
-            return (
-                f"📊 Le prix prédit est **{st.session_state.predicted_price:.4f}**.\n\n"
-                "Basé sur les 60 derniers prix.\n"
-                "⚠️ Ce n’est pas une garantie."
-            )
-        else:
-            return "ℹ️ Veuillez d’abord cliquer sur **Prédire**."
+    if any(w in q for w in ["résultat", "prediction", "prix"]):
+        if st.session_state.predicted_price is None:
+            return "⛔ Veuillez d’abord entrer 60 prix et cliquer sur **Prédire**."
+        return (
+            f"📊 Le prix prédit est **{st.session_state.predicted_price:.4f}**.\n\n"
+            "Basé sur les 60 derniers prix.\n"
+            "⚠️ Ce n’est pas une garantie."
+        )
 
-    elif "risque" in q:
+    if "risque" in q:
+        if st.session_state.predicted_price is None:
+            return "⛔ Impossible d’évaluer le risque sans prédiction."
         return (
             "⚠️ Le marché est imprévisible.\n"
             "Cette prédiction n’est PAS un conseil financier.\n"
             "Utilisez toujours une gestion du risque."
         )
 
-    else:
-        return (
-            "🤖 Je n’ai pas bien compris.\n\n"
-            "Essayez :\n"
-            "• Explique le résultat\n"
-            "• Quel est le risque ?"
-        )
+    return (
+        "🤖 Question non reconnue.\n\n"
+        "Essayez par exemple :\n"
+        "• Explique le résultat\n"
+        "• Quel est le risque ?"
+    )
 
 # ===================== CHATBOT UI =====================
 st.divider()
@@ -155,20 +127,18 @@ st.markdown("### 💡 Questions suggérées")
 
 c1, c2, c3 = st.columns(3)
 
-if c1.button("👋 Hello / Who are you"):
-    q = "Hello, who are you?"
+def ask(q):
     st.session_state.messages.append({"role": "user", "content": q})
-    st.session_state.messages.append({"role": "assistant", "content": get_reply(q)})
+    st.session_state.messages.append({"role": "assistant", "content": chatbot_reply(q)})
+
+if c1.button("👋 Hello / Who are you"):
+    ask("Hello")
 
 if c2.button("📊 Explique le résultat"):
-    q = "Explique le résultat"
-    st.session_state.messages.append({"role": "user", "content": q})
-    st.session_state.messages.append({"role": "assistant", "content": get_reply(q)})
+    ask("Explique le résultat")
 
 if c3.button("⚠️ Quel est le risque ?"):
-    q = "Quel est le risque ?"
-    st.session_state.messages.append({"role": "user", "content": q})
-    st.session_state.messages.append({"role": "assistant", "content": get_reply(q)})
+    ask("Quel est le risque ?")
 
 # ===================== CHAT HISTORY =====================
 for msg in st.session_state.messages:
@@ -177,11 +147,5 @@ for msg in st.session_state.messages:
 
 # ===================== CHAT INPUT =====================
 user_input = st.chat_input("Posez votre question (FR / EN / AR)")
-
 if user_input:
-    st.session_state.messages.append({"role": "user", "content": user_input})
-    reply = get_reply(user_input)
-    st.session_state.messages.append({"role": "assistant", "content": reply})
-
-    with st.chat_message("assistant"):
-        st.markdown(reply)
+    ask(user_input)
