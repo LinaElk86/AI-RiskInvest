@@ -50,51 +50,52 @@ if user_input:
         st.markdown(user_input)
 
  # Simple chatbot logic
-question = user_input.lower() if user_input else ""
 
-# Greetings
-if any(word in question for word in ["hello", "hi", "bonjour", "salut", "salam", "slm"]):
-    reply = (
-        "Bonjour 👋 Je suis le chatbot AI-RiskInvest 🤖.\n"
-        "Je peux vous aider à comprendre l’application, le modèle et la prédiction."
+    # Chatbot logic
+    if any(word in question for word in ["hello", "hi", "salut", "bonjour", "salam"]):
+        reply = (
+            "Bonjour 👋 Je suis le chatbot AI-RiskInvest 🤖.\n"
+            "Je peux vous aider à comprendre l’application et les prédictions."
+        )
+
+    elif any(word in question for word in ["quoi", "what", "application"]):
+        reply = (
+            "AI-RiskInvest est une application de prédiction boursière "
+            "basée sur le Machine Learning et la gestion du risque."
+        )
+
+    elif any(word in question for word in ["comment", "utiliser"]):
+        reply = (
+            "Entrez les 60 derniers prix de clôture "
+            "puis cliquez sur le bouton « Prédire »."
+        )
+
+    elif any(word in question for word in ["prediction", "prédit", "résultat"]):
+        reply = (
+            "La prédiction est une estimation du prochain prix "
+            "basée sur les données historiques."
+        )
+
+    elif any(word in question for word in ["risque", "risk"]):
+        reply = (
+            "Le risque représente l’incertitude du marché. "
+            "Cette application aide à mieux l’anticiper."
+        )
+
+    elif any(word in question for word in ["merci", "thanks"]):
+        reply = "Avec plaisir 😊 N’hésitez pas à poser d’autres questions."
+
+    else:
+        reply = (
+            "Je n’ai pas bien compris 🤖.\n"
+            "Essayez par exemple : hello, comment utiliser, prédiction, risque."
+        )
+
+    # Save assistant response
+    st.session_state.messages.append(
+        {"role": "assistant", "content": reply}
     )
 
-elif any(word in question for word in ["quoi", "what", "application", "ai-riskinvest"]):
-    reply = (
-        "AI-RiskInvest est une application de prédiction boursière "
-        "basée sur le Machine Learning et la gestion du risque."
-    )
-
-elif any(word in question for word in ["comment", "utiliser", "use"]):
-    reply = (
-        "Entrez les 60 derniers prix de clôture "
-        "puis cliquez sur le bouton « Prédire »."
-    )
-
-elif any(word in question for word in ["prediction", "prédit", "résultat"]):
-    reply = (
-        "La prédiction représente une estimation du prochain prix "
-        "basée sur les données historiques."
-    )
-
-elif any(word in question for word in ["risque", "risk"]):
-    reply = (
-        "Le risque correspond à l’incertitude des marchés financiers. "
-        "Cette application aide à mieux l’anticiper."
-    )
-
-elif any(word in question for word in ["modèle", "modele", "model", "machine learning"]):
-    reply = (
-        "Le modèle utilise le Machine Learning pour analyser "
-        "les prix passés et identifier des tendances."
-    )
-
-elif any(word in question for word in ["merci", "thanks"]):
-    reply = "Avec plaisir 😊 N’hésitez pas si vous avez d’autres questions."
-
-else:
-    reply = (
-        "Je n’ai pas compris votre question 🤖.\n"
-        "Essayez par exemple : hello, comment utiliser, prédiction, risque."
-    )
-
+    # Display assistant message
+    with st.chat_message("assistant"):
+        st.markdown(reply)
