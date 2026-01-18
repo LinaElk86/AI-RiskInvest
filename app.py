@@ -54,7 +54,7 @@ if texte_prix:
         st.error("❌ Veuillez entrer uniquement des nombres.")
 
 # ===================== DISPLAY PRICES =====================
-st.markdown("### 📋 Détail des 60 prix")
+st.markdown("###  Détail des 60 prix")
 
 idx = 0
 for _ in range(6):
