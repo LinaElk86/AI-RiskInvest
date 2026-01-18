@@ -9,14 +9,26 @@ st.set_page_config(
     layout="wide"
 )
 
+# ===================== HEADER =====================
+try:
+    st.image("header.png", use_container_width=True)
+except:
+    pass
+
+st.markdown("<br>", unsafe_allow_html=True)
+
 # ===================== LOAD MODEL =====================
 model = joblib.load("riskinvest_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
-# ===================== HEADER =====================
-st.image("header.png", use_column_width=True)
-st.markdown("<br>", unsafe_allow_html=True)
+# ===================== SESSION STATE =====================
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
+if "predicted_price" not in st.session_state:
+    st.session_state.predicted_price = None
+
+# ===================== TITLE =====================
 st.title("📈 AI-RiskInvest")
 st.write("Application de prédiction boursière et gestion du risque")
 
@@ -25,7 +37,7 @@ st.subheader("📥 Entrer les 60 derniers prix de clôture")
 
 texte_prix = st.text_area(
     "Entrez les 60 prix (séparés par des virgules ou retour à la ligne)",
-    height=180,
+    height=200,
     placeholder="Exemple :\n1.25\n1.30\n1.28\n...\n(60 valeurs)"
 )
 
@@ -34,7 +46,7 @@ prices = [0.0] * 60
 if texte_prix:
     try:
         texte_prix = texte_prix.replace("\n", ",")
-        valeurs = [float(v.strip()) for v in texte_prix.split(",") if v.strip()]
+        valeurs = [float(p.strip()) for p in texte_prix.split(",") if p.strip()]
 
         for i in range(min(len(valeurs), 60)):
             prices[i] = valeurs[i]
@@ -47,24 +59,23 @@ if texte_prix:
     except ValueError:
         st.error("❌ Veuillez entrer uniquement des nombres.")
 
-# ===================== DISPLAY 60 PRICES =====================
+# ===================== DISPLAY PRICES =====================
 st.markdown("### 📋 Détail des 60 prix")
 
-index = 0
+idx = 0
 for _ in range(6):
     cols = st.columns(10)
     for col in cols:
         col.number_input(
-            f"{index + 1}",
-            value=prices[index],
-            disabled=True
+            f"{idx + 1}",
+            value=prices[idx],
+            disabled=True,
+            key=f"price_{idx}"
         )
-        index += 1
+        idx += 1
 
 # ===================== PREDICTION =====================
 st.markdown("## 📊 Résultat de la prédiction")
-
-predicted_price = None
 
 if st.button("🔮 Prédire"):
     prices_array = np.array(prices).reshape(-1, 1)
@@ -72,20 +83,26 @@ if st.button("🔮 Prédire"):
     X_input = prices_scaled.reshape(1, -1)
 
     prediction = model.predict(X_input)
-    predicted_price = scaler.inverse_transform(
+
+    st.session_state.predicted_price = scaler.inverse_transform(
         prediction.reshape(-1, 1)
     )[0][0]
 
     st.success("✅ Prédiction effectuée avec succès")
-    st.metric("📈 Prix prédit", f"{predicted_price:.4f}")
+    st.metric("📈 Prix prédit", f"{st.session_state.predicted_price:.4f}")
 
     # ===================== GRAPH =====================
     st.subheader("📉 Évolution des prix")
 
-    fig, ax = plt.subplots(figsize=(4, 2.2))
+    fig, ax = plt.subplots(figsize=(5, 2.5))
     ax.plot(range(1, 61), prices, label="Prix historiques", linewidth=2)
-    ax.scatter(61, predicted_price, color="red", label="Prix prédit")
-    ax.plot([60, 61], [prices[-1], predicted_price], linestyle="--", color="red")
+    ax.scatter(61, st.session_state.predicted_price, color="red", label="Prix prédit")
+    ax.plot(
+        [60, 61],
+        [prices[-1], st.session_state.predicted_price],
+        linestyle="--",
+        color="red"
+    )
 
     ax.set_xlabel("Temps")
     ax.set_ylabel("Prix")
@@ -99,62 +116,56 @@ if st.button("🔮 Prédire"):
 st.divider()
 st.subheader("💬 Chatbot AI-RiskInvest")
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# ---------- Buttons ----------
 st.markdown("### 💡 Questions suggérées")
 
 c1, c2, c3 = st.columns(3)
 if c1.button("👋 Hello / Who are you"):
-    st.session_state.messages.append({"role": "user", "content": "hello"})
+    st.session_state.messages.append({"role": "user", "content": "Hello"})
 if c2.button("📊 Explique le résultat"):
-    st.session_state.messages.append({"role": "user", "content": "explique le résultat"})
+    st.session_state.messages.append({"role": "user", "content": "Explique le résultat"})
 if c3.button("⚠️ Quel est le risque ?"):
-    st.session_state.messages.append({"role": "user", "content": "quel est le risque"})
+    st.session_state.messages.append({"role": "user", "content": "Quel est le risque ?"})
 
-# ---------- Display Chat ----------
+# ---------- DISPLAY HISTORY ----------
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# ---------- Input ----------
+# ---------- INPUT ----------
 user_input = st.chat_input("Posez votre question (FR / EN / AR)")
 
 if user_input:
     st.session_state.messages.append({"role": "user", "content": user_input})
     q = user_input.lower()
 
-    if any(w in q for w in ["hello", "bonjour", "salam", "who", "من انت", "شكون"]):
-        reply = (
-            "👋 Je suis **AI-RiskInvest** 🤖.\n\n"
-            "Je vous aide à comprendre les prédictions boursières "
-            "et la gestion du risque.\n\n"
-            "أستطيع المساعدة بالعربية، الفرنسية والإنجليزية."
-        )
+    # ---------- BOT LOGIC ----------
+    if any(w in q for w in ["hello", "bonjour", "salut", "salam"]):
+        reply = "👋 Je suis **AI-RiskInvest**, un assistant pour expliquer les prédictions et les risques."
 
-    elif any(w in q for w in ["résultat", "prediction", "prix", "نتيجة", "توقع"]):
-        if predicted_price:
-            reply = f"📊 Le prix prédit est **{predicted_price:.4f}**.\nBasé sur 60 prix historiques."
+    elif "résultat" in q or "prediction" in q or "prix" in q:
+        if st.session_state.predicted_price is not None:
+            reply = (
+                f"📊 Le prix prédit est **{st.session_state.predicted_price:.4f}**.\n\n"
+                "Il est basé sur les 60 derniers prix.\n"
+                "⚠️ Ce n’est pas une garantie."
+            )
         else:
             reply = "ℹ️ Veuillez d’abord cliquer sur **Prédire**."
 
-    elif any(w in q for w in ["risque", "risk", "خطر"]):
+    elif "risque" in q:
         reply = (
-            "⚠️ Ceci n’est PAS un conseil financier.\n"
-            "Le marché peut être imprévisible.\n"
-            "Utilisez toujours une bonne gestion du risque."
-        )
-
-    elif any(w in q for w in ["comment", "utiliser", "how", "كيف"]):
-        reply = (
-            "1️⃣ Entrer 60 prix\n"
-            "2️⃣ Cliquer sur Prédire\n"
-            "3️⃣ Analyser le graphique"
+            "⚠️ Le marché est imprévisible.\n"
+            "Cette prédiction n’est **pas un conseil financier**.\n"
+            "Utilisez toujours un stop-loss."
         )
 
     else:
-        reply = "🤖 Je n’ai pas compris. Essayez : Résultat, Risque, Comment utiliser."
+        reply = (
+            "🤖 Je peux répondre à :\n"
+            "• Explique le résultat\n"
+            "• Quel est le risque ?\n"
+            "• Hello"
+        )
 
     st.session_state.messages.append({"role": "assistant", "content": reply})
     with st.chat_message("assistant"):
@@ -163,26 +174,8 @@ if user_input:
 # ===================== STYLE =====================
 st.markdown("""
 <style>
-.stApp {
-    background-color: #0f172a;
-    color: #e5e7eb;
-    font-family: Segoe UI, sans-serif;
-}
-.stButton>button {
-    background-color: #1e293b;
-    color: white;
-    border-radius: 6px;
-}
-[data-testid="chat-message-assistant"] {
-    background-color: #020617;
-    border-left: 4px solid #e11d48;
-    padding: 10px;
-    border-radius: 8px;
-}
-[data-testid="chat-message-user"] {
-    background-color: #1e293b;
-    padding: 10px;
-    border-radius: 8px;
-}
+.stApp { background-color:#0f172a; color:#e5e7eb; }
+[data-testid="chat-message-user"] { background:#1e293b; padding:8px; border-radius:8px; }
+[data-testid="chat-message-assistant"] { background:#020617; padding:8px; border-radius:8px; border-left:3px solid #e11d48; }
 </style>
 """, unsafe_allow_html=True)
