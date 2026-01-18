@@ -80,7 +80,7 @@ if st.button("🔮 Prédire"):
     # ===================== GRAPH =====================
     st.subheader("📉 Évolution des prix")
 
-    fig, ax = plt.subplots(figsize=(10, 4))
+    fig, ax = plt.subplots(figsize=(6, 3))
     ax.plot(range(1, 61), prices, label="Prix historiques", linewidth=2)
     ax.scatter(61, predicted_price, color="red", label="Prix prédit")
     ax.plot([60, 61], [prices[-1], predicted_price], linestyle="--", color="red")
