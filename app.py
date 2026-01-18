@@ -70,7 +70,7 @@ for _ in range(6):
 # ===================== PREDICTION =====================
 st.markdown("##   Résultat de la prédiction")
 
-if st.button("🔮 Prédire"):
+if st.button(" Prédire"):
     prices_array = np.array(prices).reshape(-1, 1)
     prices_scaled = scaler.transform(prices_array)
     X_input = prices_scaled.reshape(1, -1)
