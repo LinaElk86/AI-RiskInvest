@@ -2,7 +2,6 @@ import streamlit as st
 import numpy as np
 import joblib
 
-
 # ===================== LOAD MODEL =====================
 model = joblib.load("riskinvest_model.pkl")
 scaler = joblib.load("scaler.pkl")
@@ -20,7 +19,7 @@ texte_prix = st.text_area(
     placeholder="Exemple :\n1.25\n1.30\n1.28\n...\n(60 valeurs)"
 )
 
-# Liste fixe de 60 prix (visible toujours)
+# Liste fixe de 60 prix (دائما باينة)
 prices = [0.0] * 60
 
 if texte_prix:
@@ -43,8 +42,8 @@ if texte_prix:
 st.markdown("### 📋 Détail des 60 prix")
 
 index = 0
-for ligne in range(6):  # 6 lignes
-    cols = st.columns(10)  # 10 colonnes
+for ligne in range(6):
+    cols = st.columns(10)
     for col in cols:
         col.number_input(
             f"{index + 1}",
@@ -54,7 +53,7 @@ for ligne in range(6):  # 6 lignes
         index += 1
 
 # ===================== PREDICTION =====================
-st.markdown("## Résultat de la prédiction")
+st.markdown("## 📊 Résultat de la prédiction")
 
 if st.button("Prédire"):
     if len(prices) != 60:
@@ -70,52 +69,52 @@ if st.button("Prédire"):
         )[0][0]
 
         st.success("✅ Prédiction effectuée avec succès")
-        st.metric(
-            label="📊 Prix prédit",
-            value=f"{predicted_price:.4f}"
+        st.metric("📈 Prix prédit", f"{predicted_price:.4f}")
+
+        # ===================== GRAPH =====================
+        st.subheader("📉 Évolution des prix")
+
+        x_prices = list(range(1, 61))
+        x_pred = 61
+
+        fig, ax = plt.subplots(figsize=(10, 4))
+
+        ax.plot(x_prices, prices, label="Prix historiques", linewidth=2)
+        ax.scatter(x_pred, predicted_price, color="red", label="Prix prédit", zorder=5)
+        ax.plot(
+            [60, x_pred],
+            [prices[-1], predicted_price],
+            linestyle="--",
+            color="red"
         )
 
-#___________________________________________________________________
-import matplotlib.pyplot as plt
+        ax.set_xlabel("Temps")
+        ax.set_ylabel("Prix")
+        ax.set_title("Prédiction du prochain prix")
+        ax.legend()
+        ax.grid(True)
 
-# ===================== GRAPH =====================
-st.subheader("📈 Évolution des prix")
+        st.pyplot(fig)
 
-# Axe X : 60 périodes + prediction
-x_prices = list(range(1, 61))
-x_pred = 61
 
-# Création du graphique
-fig, ax = plt.subplots(figsize=(10, 4))
 
-# Prix historiques
-ax.plot(x_prices, prices, label="Prix historiques", color="blue")
 
-# Point de prédiction
-ax.scatter(
-    x_pred,
-    predicted_price,
-    color="red",
-    label="Prix prédit",
-    zorder=5
-)
 
-# Ligne pointillée vers la prédiction
-ax.plot(
-    [60, x_pred],
-    [prices[-1], predicted_price],
-    linestyle="--",
-    color="red",
-    alpha=0.7
-)
 
-ax.set_xlabel("Temps")
-ax.set_ylabel("Prix")
-ax.set_title("Prédiction du prochain prix")
-ax.legend()
-ax.grid(True)
 
-st.pyplot(fig)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # ===================== CHATBOT =====================
 
