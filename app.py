@@ -25,3 +25,49 @@ if st.button("Prédire"):
     predicted_price = scaler.inverse_transform(prediction.reshape(-1,1))[0][0]
 
     st.success(f"📊 Prix prédit : {predicted_price:.2f}")
+
+
+
+st.divider()
+st.subheader("💬 Chatbot AI-RiskInvest")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display chat history
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+# User input
+user_input = st.chat_input("Posez votre question ici...")
+
+if user_input:
+    # Save user message
+    st.session_state.messages.append({"role": "user", "content": user_input})
+
+    with st.chat_message("user"):
+        st.markdown(user_input)
+
+    # Simple chatbot logic
+    if "quoi" in user_input.lower() or "what" in user_input.lower():
+        reply = (
+            "Je suis le chatbot de AI-RiskInvest. "
+            "Je vous aide à comprendre l'application et les prédictions."
+        )
+    elif "comment" in user_input.lower():
+        reply = (
+            "Entrez les 60 derniers prix de clôture "
+            "puis cliquez sur le bouton « Prédire »."
+        )
+    else:
+        reply = (
+            "Bonne question 👍 "
+            "Pour le moment, je réponds uniquement à des questions simples."
+        )
+
+    # Save assistant response
+    st.session_state.messages.append({"role": "assistant", "content": reply})
+
+    with st.chat_message("assistant"):
+        st.markdown(reply)
