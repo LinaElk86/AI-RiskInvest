@@ -103,3 +103,47 @@ if user_input:
     # Display assistant message
     with st.chat_message("assistant"):
         st.markdown(reply)
+
+
+
+#_________________________________________________________________________________________3______________________________________________________________________________________
+
+st.markdown("""
+<style>
+.stApp {
+    background-color: #0d1b2a;
+    color: white;
+}
+
+h1, h2, h3 {
+    color: #e63946;
+}
+
+.stButton>button {
+    background-color: #1d3557;
+    color: white;
+    border-radius: 8px;
+    border: 1px solid #e63946;
+}
+.stButton>button:hover {
+    background-color: #e63946;
+}
+
+input {
+    background-color: #1b263b !important;
+    color: white !important;
+}
+
+[data-testid="chat-message-user"] {
+    background-color: #1d3557;
+    border-radius: 10px;
+}
+
+[data-testid="chat-message-assistant"] {
+    background-color: #e63946;
+    border-radius: 10px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
