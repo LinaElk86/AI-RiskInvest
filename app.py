@@ -3,16 +3,15 @@ import numpy as np
 import joblib
 
 
-
-# ===================== CHARGEMENT MODELE =====================
+# ===================== LOAD MODEL =====================
 model = joblib.load("riskinvest_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
-# ===================== TITRE =====================
+# ===================== TITLE =====================
 st.title("📈 AI-RiskInvest")
 st.write("Application de prédiction boursière et gestion du risque")
 
-# ===================== INPUT PRIX =====================
+# ===================== INPUT PRICES =====================
 st.subheader("📥 Entrer les 60 derniers prix de clôture")
 
 texte_prix = st.text_area(
@@ -21,35 +20,38 @@ texte_prix = st.text_area(
     placeholder="Exemple :\n1.25\n1.30\n1.28\n...\n(60 valeurs)"
 )
 
-prices = []
+# Liste fixe de 60 prix (visible toujours)
+prices = [0.0] * 60
 
 if texte_prix:
     try:
         texte_prix = texte_prix.replace("\n", ",")
-        prices = [float(p.strip()) for p in texte_prix.split(",") if p.strip() != ""]
+        valeurs = [float(p.strip()) for p in texte_prix.split(",") if p.strip() != ""]
 
-        if len(prices) != 60:
-            st.warning(f"⚠️ Vous avez entré {len(prices)} prix. Il faut exactement 60.")
+        for i in range(min(len(valeurs), 60)):
+            prices[i] = valeurs[i]
+
+        if len(valeurs) != 60:
+            st.warning(f"⚠️ Vous avez entré {len(valeurs)} prix. Il faut exactement 60.")
         else:
             st.success("✅ 60 prix chargés avec succès")
 
     except ValueError:
         st.error("❌ Veuillez entrer uniquement des nombres.")
 
-# ================= AFFICHAGE DES 60 PRIX =================
-if len(prices) == 60:
-    st.markdown("### 📋 Détail des 60 prix")
+# ===================== DISPLAY 60 PRICES =====================
+st.markdown("### 📋 Détail des 60 prix")
 
-    index = 0
-    for ligne in range(6):  # 6 lignes
-        cols = st.columns(10)  # 10 colonnes par ligne
-        for col in cols:
-            col.number_input(
-                f"{index + 1}",
-                value=prices[index],
-                disabled=True
-            )
-            index += 1
+index = 0
+for ligne in range(6):  # 6 lignes
+    cols = st.columns(10)  # 10 colonnes
+    for col in cols:
+        col.number_input(
+            f"{index + 1}",
+            value=prices[index],
+            disabled=True
+        )
+        index += 1
 
 # ===================== PREDICTION =====================
 if st.button("Prédire") and len(prices) == 60:
@@ -61,8 +63,6 @@ if st.button("Prédire") and len(prices) == 60:
     predicted_price = scaler.inverse_transform(
         prediction.reshape(-1, 1)
     )[0][0]
-
-    st.success(f"📊 Prix prédit : {predicted_price:.2f}")
 
 
 
