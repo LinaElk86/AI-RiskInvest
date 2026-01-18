@@ -110,69 +110,59 @@ if user_input:
 st.markdown("""
 <style>
 
-/* Import elegant font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-/* Global font */
-html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-}
-
-/* Background */
+/* Global background */
 .stApp {
-    background-color: #0d1b2a;
-    color: #eaeaea;
+    background-color: #0f172a;
+    color: #e5e7eb;
+    font-family: "Segoe UI", sans-serif;
 }
 
 /* Titles */
-h1 {
-    color: #e63946;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-h2, h3 {
-    color: #f1faee;
+h1, h2, h3 {
+    color: #f1f5f9;
     font-weight: 600;
 }
 
-/* Text */
-p, label {
-    font-size: 16px;
-    color: #eaeaea;
+/* Subtitles */
+h4, h5, h6 {
+    color: #cbd5f5;
+}
+
+/* Buttons */
+.stButton > button {
+    background-color: #1e293b;
+    color: white;
+    border-radius: 6px;
+    border: 1px solid #475569;
+    padding: 8px 16px;
+    font-weight: 500;
+}
+.stButton > button:hover {
+    background-color: #334155;
+    border-color: #e11d48;
 }
 
 /* Inputs */
 input {
-    background-color: #1b263b !important;
+    background-color: #020617 !important;
     color: white !important;
-    border-radius: 6px;
-    border: 1px solid #415a77;
+    border: 1px solid #334155 !important;
+    border-radius: 6px !important;
 }
 
-/* Buttons */
-.stButton>button {
-    background-color: #1d3557;
-    color: white;
-    border-radius: 6px;
-    border: 1px solid #e63946;
-    font-weight: 500;
-}
-.stButton>button:hover {
-    background-color: #e63946;
-}
-
-/* Chat messages */
+/* Chat user */
 [data-testid="chat-message-user"] {
-    background-color: #1d3557;
+    background-color: #1e293b;
     border-radius: 10px;
-    padding: 10px;
-    font-size: 15px;
+    padding: 8px;
 }
+
+/* Chat assistant */
 [data-testid="chat-message-assistant"] {
-    background-color: #e63946;
+    background-color: #020617;
     border-radius: 10px;
-    padding: 10px;
-    font-size: 15px;
+    padding: 8px;
+    border-left: 3px solid #e11d48;
 }
 
 </style>
