@@ -3,9 +3,8 @@ import numpy as np
 import joblib
 
 
-# INSTALLER LE MODELE scaler
 
-# Charger le modèle et le scaler
+# ===================== CHARGEMENT MODELE =====================
 model = joblib.load("riskinvest_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
@@ -37,40 +36,20 @@ if texte_prix:
     except ValueError:
         st.error("❌ Veuillez entrer uniquement des nombres.")
 
-#______________________________________
-if texte_prix:
-    try:
-        texte_prix = texte_prix.replace("\n", ",")
-        prices = [float(p.strip()) for p in texte_prix.split(",") if p.strip() != ""]
-
-        if len(prices) != 60:
-            st.warning(f"⚠️ Vous avez entré {len(prices)} prix. Il faut exactement 60.")
-        else:
-            st.success("✅ 60 prix chargés avec succès")
-
 # ================= AFFICHAGE DES 60 PRIX =================
-st.markdown("### 📋 Détail des 60 prix")
+if len(prices) == 60:
+    st.markdown("### 📋 Détail des 60 prix")
 
-index = 0
-for ligne in range(6):  # 6 lignes
-    cols = st.columns(10)  # 10 colonnes par ligne
-    for col in cols:
-        col.number_input(
-            f"{index + 1}",
-            value=prices[index],
-            disabled=True
-        )
-        index += 1
-
-
-1   2   3   4   5   6   7   8   9   10
-11  12  13  14  15  16  17  18  19  20
-21  22  23  24  25  26  27  28  29  30
-31  32  33  34  35  36  37  38  39  40
-41  42  43  44  45  46  47  48  49  50
-51  52  53  54  55  56  57  58  59  60
-
-
+    index = 0
+    for ligne in range(6):  # 6 lignes
+        cols = st.columns(10)  # 10 colonnes par ligne
+        for col in cols:
+            col.number_input(
+                f"{index + 1}",
+                value=prices[index],
+                disabled=True
+            )
+            index += 1
 
 # ===================== PREDICTION =====================
 if st.button("Prédire") and len(prices) == 60:
@@ -84,6 +63,7 @@ if st.button("Prédire") and len(prices) == 60:
     )[0][0]
 
     st.success(f"📊 Prix prédit : {predicted_price:.2f}")
+
 
 
 #______________________________________________________________________________2__________________________________________________________________
