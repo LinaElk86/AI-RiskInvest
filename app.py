@@ -80,7 +80,7 @@ if st.button("🔮 Prédire"):
     # ===================== GRAPH =====================
     st.subheader("📉 Évolution des prix")
 
-    fig, ax = plt.subplots(figsize=(5, 3))
+    fig, ax = plt.subplots(figsize=(4, 2.2))
     ax.plot(range(1, 61), prices, label="Prix historiques", linewidth=2)
     ax.scatter(61, predicted_price, color="red", label="Prix prédit")
     ax.plot([60, 61], [prices[-1], predicted_price], linestyle="--", color="red")
@@ -91,7 +91,7 @@ if st.button("🔮 Prédire"):
     ax.legend()
     ax.grid(True)
 
-    st.pyplot(fig)
+    st.pyplot(fig, use_container_width=False)
 # ===================== CHATBOT =====================
 st.divider()
 st.subheader("💬 Chatbot AI-RiskInvest")
