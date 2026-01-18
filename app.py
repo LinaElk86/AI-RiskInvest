@@ -1,8 +1,6 @@
 import streamlit as st
 import numpy as np
-import pandas
-import scikit-learn
-import jobli
+import joblib
 
 # INSTALLER LE MODELE scaler
 model = joblib.load("riskinvest_model.pkl")
