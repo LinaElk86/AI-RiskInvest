@@ -109,75 +109,71 @@ if user_input:
 #_________________________________________________________________________________________3______________________________________________________________________________________
 st.markdown("""
 <style>
-/* ===== Global ===== */
-.stApp {
-    background-color: #0f172a; /* bleu foncé classique */
-    color: #f1f5f9;
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+
+/* Import elegant font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Global font */
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
 }
 
-/* ===== Titles ===== */
+/* Background */
+.stApp {
+    background-color: #0d1b2a;
+    color: #eaeaea;
+}
+
+/* Titles */
 h1 {
-    color: #e11d48; /* rouge foncé */
+    color: #e63946;
     font-weight: 700;
+    letter-spacing: 0.5px;
 }
 h2, h3 {
-    color: #f8fafc;
+    color: #f1faee;
+    font-weight: 600;
 }
 
-/* ===== Text ===== */
+/* Text */
 p, label {
     font-size: 16px;
-    color: #e5e7eb;
+    color: #eaeaea;
 }
 
-/* ===== Inputs ===== */
-input, textarea {
-    background-color: #020617 !important;
-    color: #f8fafc !important;
-    border: 1px solid #334155 !important;
-    border-radius: 6px !important;
-    font-size: 15px !important;
-}
-
-/* Placeholder */
-textarea::placeholder {
-    color: #94a3b8 !important;
-}
-
-/* ===== Buttons ===== */
-.stButton>button {
-    background-color: #1e293b;
-    color: white;
-    border: 1px solid #e11d48;
+/* Inputs */
+input {
+    background-color: #1b263b !important;
+    color: white !important;
     border-radius: 6px;
-    padding: 0.5em 1.2em;
+    border: 1px solid #415a77;
+}
+
+/* Buttons */
+.stButton>button {
+    background-color: #1d3557;
+    color: white;
+    border-radius: 6px;
+    border: 1px solid #e63946;
     font-weight: 500;
 }
 .stButton>button:hover {
-    background-color: #e11d48;
-    color: white;
+    background-color: #e63946;
 }
 
-/* ===== Chat messages ===== */
+/* Chat messages */
 [data-testid="chat-message-user"] {
-    background-color: #020617;
-    border-radius: 8px;
+    background-color: #1d3557;
+    border-radius: 10px;
     padding: 10px;
+    font-size: 15px;
 }
-
 [data-testid="chat-message-assistant"] {
-    background-color: #1e293b;
-    border-left: 4px solid #e11d48;
-    border-radius: 8px;
+    background-color: #e63946;
+    border-radius: 10px;
     padding: 10px;
+    font-size: 15px;
 }
 
-/* ===== Chat input ===== */
-[data-testid="stChatInput"] textarea {
-    background-color: #020617 !important;
-    color: #f8fafc !important;
-    font-size: 15px !important;
-}
 </style>
 """, unsafe_allow_html=True)
